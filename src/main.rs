@@ -2,6 +2,7 @@ use std::env;
 use std::process::ExitCode;
 use std::fs::File;
 use std::io::{self, Error, BufReader, BufRead};
+use std::collections::HashMap;
 
 fn main() -> ExitCode {
     let args: Vec<String> = env::args().skip(1).collect();
@@ -50,5 +51,19 @@ fn handle_file(filename: &str) -> Result<String, Error> {
 fn handle_compress<R: BufRead>(reader: &mut R) -> Result<String, Error> {
     let mut s = String::new();
     reader.read_to_string(&mut s)?;
+    calculate_occurences(&mut s);
     Ok(s)
+}
+
+fn calculate_occurences(string: &mut String) -> HashMap<char, u64> {
+    let mut result = HashMap::new();
+    for char in string.chars() {
+        if let Some(val) = result.get_mut(&char) {
+            *val += 1;
+        } else {
+            result.insert(char, 1);
+        }
+    }
+    println!("{:?}", result);
+    result
 }
