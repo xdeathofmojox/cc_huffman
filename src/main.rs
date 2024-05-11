@@ -2,7 +2,7 @@ use std::env;
 use std::process::ExitCode;
 use std::fs::File;
 use std::io::{self, Error, BufReader, BufRead};
-use std::collections::HashMap;
+use std::collections::{HashMap, BinaryHeap};
 
 fn main() -> ExitCode {
     let args: Vec<String> = env::args().skip(1).collect();
@@ -67,3 +67,46 @@ fn calculate_occurences(string: &mut String) -> HashMap<char, u64> {
     println!("{:?}", result);
     result
 }
+
+trait BaseNode {
+    fn weight(&self) -> i32;
+    fn is_leaf(&self) -> bool;
+}
+
+struct LeafNode {
+    element: char,
+    weight: i32,
+}
+
+impl LeafNode {
+    fn char(&self) -> char {
+        self.element
+    }
+}
+
+impl BaseNode for LeafNode {
+    fn weight(&self) -> i32 {
+        self.weight
+    }
+
+    fn is_leaf(&self) -> bool {
+        true
+    }
+}
+
+struct InternalNode {
+    weight: i32,
+    left: Box<dyn BaseNode>,
+    right: Box<dyn BaseNode>,
+}
+
+impl BaseNode for InternalNode {
+    fn weight(&self) -> i32 {
+        self.weight
+    }
+
+    fn is_leaf(&self) -> bool {
+        false
+    }
+}
+
